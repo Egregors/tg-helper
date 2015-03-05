@@ -1,0 +1,11 @@
+tg-helper ver.0.1
+-----------------
+Note: Use Prefix befor command! (like: Core vpn)
+
+List of available commands:
+
+vpn     -- Connect to OpenVPN server
+ip      -- Print internal IP-addres in VPN network, if posable
+stop    -- Halt VPN client
+
+help, ! -- Print this message
