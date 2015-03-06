@@ -16,6 +16,7 @@ PATH = '/home/tg/_custom'
 PREFIX = 'Node_Name ' -- Name of instance
 -- **************************
 
+
 function check_vpn ()
     os.execute("rm " .. PATH .. "/ip.txt")
     os.execute("sudo ifconfig > " .. PATH .. "/ip.txt")
@@ -52,32 +53,35 @@ function on_msg_receive (msg)
         return
     end
 
+-- PING
+    if (msg.text=='Ping') then
+        send_msg (msg.from.print_name, PREFIX .. 'ONLINE!', ok_cb, false)
+    end
 -- HELP
     if (msg.text==PREFIX .. 'help' or msg.text==PREFIX .. '!') then
         -- List of supported commands. Put description in ./help.txt
         local help = read_file(PATH .. "/help.txt")
-        send_msg (msg.from.print_name, help, ok_cb, false)
-        
+        send_msg (msg.from.print_name, PREFIX .. '\n' .. help, ok_cb, false)
     end
 -- VPN
     if (msg.text==PREFIX .. 'vpn') then
         -- Start VPN connection (~30-50 sec)
         res = check_vpn()
         if res then
-            send_msg (msg.from.print_name, 'VPN is ON ...', ok_cb, false)
-            send_msg (msg.from.print_name, res, ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. '\nVPN is ON ...', ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. '\n' .. res, ok_cb, false)
         else
             os.execute("sudo -s screen openvpn --daemon --config " .. PATH .. "/conf.ovpn")
-            send_msg (msg.from.print_name, 'VPN -> ON ...', ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. '\nVPN -> ON ...', ok_cb, false)
         end
     end
 -- STOP
     if (msg.text==PREFIX .. 'stop') then
         -- Stop VPN
         if os.execute("sudo killall openvpn") then
-            send_msg (msg.from.print_name, "VPN -> OFF ...", ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. "\nVPN -> OFF ...", ok_cb, false)
         else
-            send_msg (msg.from.print_name, "VPN is OFF", ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. "\nVPN is OFF", ok_cb, false)
         end
     end  
 -- IP
@@ -85,9 +89,9 @@ function on_msg_receive (msg)
         -- Send current internal IP in VPN network
         res = check_vpn()
         if res then
-            send_msg (msg.from.print_name, res, ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. '\n' .. res, ok_cb, false)
         else
-            send_msg (msg.from.print_name, 'Looks like VPN is down', ok_cb, false)
+            send_msg (msg.from.print_name, PREFIX .. '\nLooks like VPN is down', ok_cb, false)
         end
         return
     end
